@@ -4,7 +4,7 @@
 
 STRING::STRING( void )
 {
-    _string = NULL;
+    _string = (char*)malloc( sizeof( int ) );
 }
 
 STRING::STRING( char *String )
@@ -29,19 +29,19 @@ void STRING::Set( const char *String )
 
 void STRING::Set( const STRING *String )
 {
-    _string = (char*)malloc( String->Length() + 1 );
+    _string = (char*)realloc( _string, String->Length() + 1 );
     _string = String->GetCharString();
 }
 
 void STRING::Set( const STRING String )
 {
-    _string = (char*)malloc( String.Length() + 1 );
+    _string = (char*)realloc( _string, String.Length() + 1 );
     _string = String.GetCharString();
 }
 
 void STRING::SetString( const char *String )
 {
-    _string = (char*)malloc( strlen( String ) + 1 );
+    _string = (char*)realloc( _string, strlen( String ) + 1 );
     strcpy( _string, String );
 }
 
