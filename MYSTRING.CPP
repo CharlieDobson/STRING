@@ -4,7 +4,11 @@
 
 STRING::STRING( void )
 {
-    _string = (char*)malloc( sizeof( int ) );
+    _string = NULL;
+    Length = 0;
+    Count = Length;
+    length = Length;
+    count = Length;
 }
 
 STRING::STRING( char *String )
@@ -29,20 +33,32 @@ void STRING::Set( const char *String )
 
 void STRING::Set( const STRING *String )
 {
-    _string = (char*)realloc( _string, String->Length() + 1 );
+    _string = (char*)malloc( String->Length + 1 );
     _string = String->GetCharString();
+    Length = strlen( _string );
+    Count = Length;
+    length = Length;
+    count = Length;
 }
 
 void STRING::Set( const STRING String )
 {
-    _string = (char*)realloc( _string, String.Length() + 1 );
+    _string = (char*)malloc( String.Length + 1 );
     _string = String.GetCharString();
+    Length = strlen( _string );
+    Count = Length;
+    length = Length;
+    count = Length;
 }
 
 void STRING::SetString( const char *String )
 {
-    _string = (char*)realloc( _string, strlen( String ) + 1 );
+    _string = (char*)malloc( strlen( String ) + 1 );
     strcpy( _string, String );
+    Length = strlen( _string );
+    Count = Length;
+    length = Length;
+    count = Length;
 }
 
 void STRING::SetString( const STRING *String )
@@ -79,20 +95,32 @@ STRING STRING::Concat( const char *String )
 {
     _string = (char*)realloc( _string, strlen( _string ) + strlen( String ) + 1 );
     strcat( _string, String );
+    Length = strlen( _string );
+    Count = Length;
+    length = Length;
+    count = Length;
     return (STRING)_string;
 }
 
 STRING STRING::Concat( const STRING *String )
 {
-    _string = (char*)realloc( _string, strlen( _string ) + String->Length() + 1 );
+    _string = (char*)realloc( _string, strlen( _string ) + String->Length + 1 );
     strcat( _string, String->GetCharString() );
+    Length = strlen( _string );
+    Count = Length;
+    length = Length;
+    count = Length;
     return (STRING)_string;
 }
 
 STRING STRING::Concat( const STRING String )
 {
-    _string = (char*)realloc( _string, strlen( _string ) + String.Length() + 1 );
+    _string = (char*)realloc( _string, strlen( _string ) + String.Length + 1 );
     strcat( _string, String.GetCharString() );
+    Length = strlen( _string );
+    Count = Length;
+    length = Length;
+    count = Length;
     return (STRING)_string;
 }
 
@@ -109,17 +137,6 @@ BOOL STRING::IsEqual( const STRING *String )
 BOOL STRING::IsEqual( const STRING String )
 {
     return strcmp( _string, String.GetCharString() ) == 0 ? TRUE : FALSE;
-}
-
-unsigned int STRING::Length( void ) const
-{
-    return _string == NULL ? 0 :
-        strlen( _string ) <= UINT_MAX ? strlen( _string ) : UINT_MAX;
-}
-
-unsigned int STRING::Count( void ) const
-{
-    return Length();
 }
 
 STRING STRING::operator=( const STRING *String )

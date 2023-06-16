@@ -28,6 +28,12 @@ class STRING
     STRING( STRING *String );
     ~STRING( void );
 
+    // public variables
+    unsigned int Length;
+    unsigned int Count;
+    unsigned int length;
+    unsigned int count;
+
     // accessors and mutators
     void Set( const char *String );
     void Set( const STRING *String );
@@ -47,8 +53,8 @@ class STRING
     BOOL IsEqual( const char *String );
     BOOL IsEqual( const STRING *String );
     BOOL IsEqual( const STRING String );
-    unsigned int Length( void ) const;
-    unsigned int Count( void ) const;
+    //unsigned int Length( void ) const;
+    //unsigned int Count( void ) const;
 
   protected:
     STRING operator=( const STRING *String );
