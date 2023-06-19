@@ -24,7 +24,11 @@ STRING::~STRING( void )
 
 STRING* STRING::set( const char *String )
 {
-    _string = (char*)malloc( strlen( String ) + 1 );
+    if ( _string == NULL )
+        _string = (char*)malloc( strlen( String ) + 1 );
+    else
+        _string = (char*)realloc( _string, strlen( String ) + 1 );
+
     if ( _string != NULL )
         strcpy( _string, String );
     return (STRING*)_string;
@@ -32,18 +36,26 @@ STRING* STRING::set( const char *String )
 
 STRING* STRING::set( const STRING *String )
 {
-    _string = (char*)malloc( String->length() + 1 );
+    if ( _string == NULL )
+        _string = (char*)malloc( String->length() + 1 );
+    else
+        _string = (char*)realloc( _string, String->length() + 1 );
+
     if ( _string != NULL )
         strcpy( _string, String->getcharstring() );
     return (STRING*)_string;
 }
 
-STRING* STRING::set( const STRING String )
+STRING STRING::set( const STRING String )
 {
-    _string = (char*)malloc( String.length() + 1 );
+    if ( _string == NULL )
+        _string = (char*)malloc( String.length() + 1 );
+    else
+        _string = (char*)realloc( _string, String.length() + 1 );
+
     if ( _string != NULL )
         strcpy( _string, String.getcharstring() );
-    return (STRING*)_string;
+    return (STRING)_string;
 }
 
 STRING* STRING::get( void ) const
@@ -78,15 +90,15 @@ STRING* STRING::concat( const STRING *String )
     return (STRING*)_string;
 }
 
-STRING* STRING::concat( const STRING String )
+STRING STRING::concat( const STRING String )
 {
     if ( _string == NULL )
         return set( String );
-        
+
     _string = (char*)realloc( _string, strlen( _string ) + String.length() + 1 );
     if ( _string != NULL )
         strcat( _string, String.getcharstring() );
-    return (STRING*)_string;
+    return (STRING)_string;
 }
 
 BOOL STRING::IsEqual( const char *String )

@@ -30,12 +30,12 @@ class STRING
     // accessors and mutators
     STRING* set( const char *String );
     STRING* set( const STRING *String );
-    STRING* set( const STRING String );
+    STRING set( const STRING String );
     STRING* get( void ) const;
     char* getcharstring( void ) const;
     STRING* concat( const char *String );
     STRING* concat( const STRING *String );
-    STRING* concat( const STRING String );
+    STRING concat( const STRING String );
 
     // methods
     BOOL IsEqual( const char *String );
