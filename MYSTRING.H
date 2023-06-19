@@ -6,7 +6,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #ifndef BOOL
 typedef int BOOL;
@@ -28,39 +27,31 @@ class STRING
     STRING( STRING *String );
     ~STRING( void );
 
-    // public variables
-    unsigned int Length;
-    unsigned int Count;
-    unsigned int length;
-    unsigned int count;
-
     // accessors and mutators
-    void Set( const char *String );
-    void Set( const STRING *String );
-    void Set( const STRING String );
-    void SetString( const char *String );
-    void SetString( const STRING *String );
-    void SetString( const STRING String );
-    STRING Get( void ) const;
-    STRING GetString( void ) const;
-    char* GetCharString( void ) const;
-    char* GetCharacterString( void ) const;
-    STRING Concat( const char *String );
-    STRING Concat( const STRING *String );
-    STRING Concat( const STRING String );
+    STRING* set( const char *String );
+    STRING* set( const STRING *String );
+    STRING* set( const STRING String );
+    STRING* get( void ) const;
+    char* getcharstring( void ) const;
+    STRING* concat( const char *String );
+    STRING* concat( const STRING *String );
+    STRING* concat( const STRING String );
 
     // methods
     BOOL IsEqual( const char *String );
     BOOL IsEqual( const STRING *String );
     BOOL IsEqual( const STRING String );
-    //unsigned int Length( void ) const;
-    //unsigned int Count( void ) const;
+    BOOL isequal( const char *String );
+    BOOL isequal( const STRING *String );
+    BOOL isequal( const STRING String );
+    unsigned int length( void ) const;
+    unsigned int count( void ) const;
 
   protected:
-    STRING operator=( const STRING *String );
-    STRING operator=( const char *String );
-    STRING operator+( const STRING *String );
-    STRING operator+( const char *String );
+    STRING* operator=( const STRING *String );
+    STRING* operator=( const char *String );
+    STRING* operator+( const STRING *String );
+    STRING* operator+( const char *String );
     BOOL operator==( const STRING *String );
     BOOL operator==( const char *String );
 };

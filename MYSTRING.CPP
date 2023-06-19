@@ -5,20 +5,16 @@
 STRING::STRING( void )
 {
     _string = NULL;
-    Length = 0;
-    Count = Length;
-    length = Length;
-    count = Length;
 }
 
 STRING::STRING( char *String )
 {
-    SetString( String );
+    set( String );
 }
 
 STRING::STRING( STRING *String )
 {
-    Set( String );
+    set( String );
 }
 
 STRING::~STRING( void )
@@ -26,102 +22,71 @@ STRING::~STRING( void )
     free( _string );
 }
 
-void STRING::Set( const char *String )
-{
-    SetString( String );
-}
-
-void STRING::Set( const STRING *String )
-{
-    _string = (char*)malloc( String->Length + 1 );
-    _string = String->GetCharString();
-    Length = strlen( _string );
-    Count = Length;
-    length = Length;
-    count = Length;
-}
-
-void STRING::Set( const STRING String )
-{
-    _string = (char*)malloc( String.Length + 1 );
-    _string = String.GetCharString();
-    Length = strlen( _string );
-    Count = Length;
-    length = Length;
-    count = Length;
-}
-
-void STRING::SetString( const char *String )
+STRING* STRING::set( const char *String )
 {
     _string = (char*)malloc( strlen( String ) + 1 );
-    strcpy( _string, String );
-    Length = strlen( _string );
-    Count = Length;
-    length = Length;
-    count = Length;
+    if ( _string != NULL )
+        strcpy( _string, String );
+    return (STRING*)_string;
 }
 
-void STRING::SetString( const STRING *String )
+STRING* STRING::set( const STRING *String )
 {
-    Set( String );
+    _string = (char*)malloc( String->length() + 1 );
+    if ( _string != NULL )
+        strcpy( _string, String->getcharstring() );
+    return (STRING*)_string;
 }
 
-void STRING::SetString( const STRING String )
+STRING* STRING::set( const STRING String )
 {
-    Set( String );
+    _string = (char*)malloc( String.length() + 1 );
+    if ( _string != NULL )
+        strcpy( _string, String.getcharstring() );
+    return (STRING*)_string;
 }
 
-STRING STRING::Get( void ) const
+STRING* STRING::get( void ) const
 {
-    return (STRING)_string;
+    return (STRING*)_string;
 }
 
-STRING STRING::GetString( void ) const
-{
-    return (STRING)_string;
-}
-
-char* STRING::GetCharString( void ) const
+char* STRING::getcharstring( void ) const
 {
     return _string;
 }
 
-char* STRING::GetCharacterString( void ) const
+STRING* STRING::concat( const char *String )
 {
-    return GetCharString();
-}
+    if ( _string == NULL )
+        return set( String );
 
-STRING STRING::Concat( const char *String )
-{
     _string = (char*)realloc( _string, strlen( _string ) + strlen( String ) + 1 );
-    strcat( _string, String );
-    Length = strlen( _string );
-    Count = Length;
-    length = Length;
-    count = Length;
-    return (STRING)_string;
+    if ( _string != NULL )
+        strcat( _string, String );
+    return (STRING*)_string;
 }
 
-STRING STRING::Concat( const STRING *String )
+STRING* STRING::concat( const STRING *String )
 {
-    _string = (char*)realloc( _string, strlen( _string ) + String->Length + 1 );
-    strcat( _string, String->GetCharString() );
-    Length = strlen( _string );
-    Count = Length;
-    length = Length;
-    count = Length;
-    return (STRING)_string;
+    if ( _string == NULL )
+        return set( String );
+
+    _string = (char*)realloc( _string, strlen( _string ) + String->length() + 1 );
+    if ( _string != NULL )
+        strcat( _string, String->getcharstring() );
+    return (STRING*)_string;
 }
 
-STRING STRING::Concat( const STRING String )
+STRING* STRING::concat( const STRING String )
 {
-    _string = (char*)realloc( _string, strlen( _string ) + String.Length + 1 );
-    strcat( _string, String.GetCharString() );
-    Length = strlen( _string );
-    Count = Length;
-    length = Length;
-    count = Length;
-    return (STRING)_string;
+    if ( _string == NULL )
+        return set( String );
+        
+    _string = (char*)realloc( _string, strlen( _string ) + String.length() + 1 );
+    if ( _string != NULL )
+        strcat( _string, String.getcharstring() );
+    return (STRING*)_string;
 }
 
 BOOL STRING::IsEqual( const char *String )
@@ -131,41 +96,62 @@ BOOL STRING::IsEqual( const char *String )
 
 BOOL STRING::IsEqual( const STRING *String )
 {
-    return strcmp( _string, String->GetCharString() ) == 0 ? TRUE : FALSE;
+    return strcmp( _string, String->getcharstring() ) == 0 ? TRUE : FALSE;
 }
 
 BOOL STRING::IsEqual( const STRING String )
 {
-    return strcmp( _string, String.GetCharString() ) == 0 ? TRUE : FALSE;
+    return strcmp( _string, String.getcharstring() ) == 0 ? TRUE : FALSE;
 }
 
-STRING STRING::operator=( const STRING *String )
+BOOL STRING::isequal( const char *String )
 {
-    SetString( (char*)String );
-    return GetString();
+    return IsEqual( String );
 }
 
-STRING STRING::operator=( const char *String )
+BOOL STRING::isequal( const STRING *String )
 {
-    SetString( String );
-    return GetString();
+    return IsEqual( String );
 }
 
-STRING STRING::operator+( const STRING *String )
+BOOL STRING::isequal( const STRING String )
 {
-    Concat( (char*)String );
-    return GetString();
+    return IsEqual( String );
 }
 
-STRING STRING::operator+( const char *String )
+unsigned int STRING::length( void ) const
 {
-    Concat( String );
-    return GetString();
+    return strlen( _string );
+}
+
+unsigned int STRING::count( void ) const
+{
+    return length();
+}
+
+STRING* STRING::operator=( const STRING *String )
+{
+    return set( String );
+}
+
+STRING* STRING::operator=( const char *String )
+{
+    return set( String );
+}
+
+STRING* STRING::operator+( const STRING *String )
+{
+    return concat( String );
+}
+
+STRING* STRING::operator+( const char *String )
+{
+    return concat( String );
 }
 
 BOOL STRING::operator==( const STRING *String )
 {
-    return IsEqual( (char*)String );
+    return IsEqual( String );
 }
 
 BOOL STRING::operator==( const char *String )
