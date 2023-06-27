@@ -22,7 +22,7 @@ STRING::~STRING( void )
     free( _string );
 }
 
-STRING* STRING::set( const char *String )
+STRING* STRING::Set( const char *String )
 {
     if ( _string == NULL )
         _string = (char*)malloc( strlen( String ) + 1 );
@@ -34,7 +34,7 @@ STRING* STRING::set( const char *String )
     return (STRING*)_string;
 }
 
-STRING* STRING::set( const STRING *String )
+STRING* STRING::Set( const STRING *String )
 {
     if ( _string == NULL )
         _string = (char*)malloc( String->length() + 1 );
@@ -46,7 +46,7 @@ STRING* STRING::set( const STRING *String )
     return (STRING*)_string;
 }
 
-STRING STRING::set( const STRING String )
+STRING STRING::Set( const STRING String )
 {
     if ( _string == NULL )
         _string = (char*)malloc( String.length() + 1 );
@@ -56,6 +56,26 @@ STRING STRING::set( const STRING String )
     if ( _string != NULL )
         strcpy( _string, String.getcharstring() );
     return (STRING)_string;
+}
+
+STRING* STRING::set( const char *String )
+{
+	return Set( String );
+}
+
+STRING* STRING::set( const STRING *String )
+{
+	return Set( String );
+}
+
+STRING STRING::set( const STRING String )
+{
+	return Set( String );
+}
+
+STRING* STRING::Get( void ) const
+{
+	return (STRING*)_string;
 }
 
 STRING* STRING::get( void ) const
@@ -68,7 +88,12 @@ char* STRING::getcharstring( void ) const
     return _string;
 }
 
-STRING* STRING::concat( const char *String )
+char* STRING::GetCharString( void ) const
+{
+	return _string;
+}
+
+STRING* STRING::Concat( const char *String )
 {
     if ( _string == NULL )
         return set( String );
@@ -79,7 +104,7 @@ STRING* STRING::concat( const char *String )
     return (STRING*)_string;
 }
 
-STRING* STRING::concat( const STRING *String )
+STRING* STRING::Concat( const STRING *String )
 {
     if ( _string == NULL )
         return set( String );
@@ -90,7 +115,7 @@ STRING* STRING::concat( const STRING *String )
     return (STRING*)_string;
 }
 
-STRING STRING::concat( const STRING String )
+STRING STRING::Concat( const STRING String )
 {
     if ( _string == NULL )
         return set( String );
@@ -99,6 +124,21 @@ STRING STRING::concat( const STRING String )
     if ( _string != NULL )
         strcat( _string, String.getcharstring() );
     return (STRING)_string;
+}
+
+STRING* STRING::concat( const char *String )
+{
+	return Concat( String );
+}
+
+STRING* STRING::concat( const STRING *String )
+{
+	return Concat( String );
+}
+
+STRING STRING::concat( const STRING String )
+{
+	return Concat( String );
 }
 
 BOOL STRING::IsEqual( const char *String )
@@ -131,14 +171,24 @@ BOOL STRING::isequal( const STRING String )
     return IsEqual( String );
 }
 
+unsigned int STRING::Length( void ) const
+{
+	return strlen( _string );
+}
+
+unsigned int STRING::Count( void ) const
+{
+	return Length();
+}
+
 unsigned int STRING::length( void ) const
 {
-    return strlen( _string );
+    return Length();
 }
 
 unsigned int STRING::count( void ) const
 {
-    return length();
+    return Length();
 }
 
 STRING* STRING::operator=( const STRING *String )
