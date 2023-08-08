@@ -1,9 +1,9 @@
-// STRING.H class defintiion file
+// STRING.H class definition file
 
 #pragma warning( disable : 4091 )
 
 #ifndef MYSTRING_H
-#define MYSTRING_H 1
+#define MYSTRING_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -58,14 +58,26 @@ class STRING
     unsigned int length( void ) const;
     unsigned int count( void ) const;
 
-  protected:
+    // operator overloads
+    STRING& operator=( const STRING& String );
     STRING* operator=( const STRING *String );
     STRING* operator=( const char *String );
+    STRING operator=( const STRING String );
+    STRING& operator+( const STRING& String );
     STRING* operator+( const STRING *String );
     STRING* operator+( const char *String );
+    STRING operator+( const STRING String );
+    BOOL operator==( const STRING& String );
     BOOL operator==( const STRING *String );
     BOOL operator==( const char *String );
+    BOOL operator==( const STRING String );
+    BOOL operator!=( const STRING& String );
+    BOOL operator!=( const STRING *String );
+    BOOL operator!=( const char *String );
+    BOOL operator!=( const STRING String );
 };
 
 #endif // end MYSTRING_H
 //#endif
+
+#pragma warning( default : 4091 )
