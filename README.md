@@ -1,7 +1,7 @@
 # STRING
 Custom STRING class.
 
-Early C++ compilers, pre-C++ standardization of the C++ 98 specification, had no support for the C++ Standard Template Library (STL).
+Early C++ compilers, pre-standardization of the C++ 98 specification, had no support for the C++ Standard Template Library (STL).
 These compilers were therefore missing support for an important data type known as std::string, which allows for dynamically resizing
 arrays of characters, and methods for determining how many characters are in the array, among many other features.
 
