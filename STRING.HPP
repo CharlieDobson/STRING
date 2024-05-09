@@ -28,9 +28,12 @@ class STRING
     // methods
     unsigned int Length( void ) const;
     unsigned int Count( void ) const;
-    void Empty( void );
+    void Clear( void );
+    int Empty( void );
     void ToUpper( void );
     void ToLower( void );
+    char Back( void );
+    char Front( void );
     STRING& SubString( const size_t position, size_t length );
 
     // operator overloads

@@ -5,11 +5,13 @@
 STRING::STRING( void )
 {
     string = NULL;
+    buffer = NULL;
 }
 
 STRING::STRING( const char& String )
 {
     string = (char*)malloc( strlen( &String ) + 1 );
+    buffer = NULL;
 
     if ( string != NULL ) {
         strcpy( string, &String );
@@ -19,6 +21,7 @@ STRING::STRING( const char& String )
 STRING::STRING( const STRING& String )
 {
     string = (char*)malloc( String.Length() + 1 );
+    buffer = NULL;
 
     if ( string != NULL ) {
         strcpy( string, String.GetCharString() );
@@ -59,19 +62,34 @@ unsigned int STRING::Count( void ) const
 	return (unsigned int)strlen( string );
 }
 
-void STRING::Empty( void )
+void STRING::Clear( void )
 {
 	memset( string, '\0', sizeof( string ) );
 }
 
+int STRING::Empty( void )
+{
+    return string[0] == NULL ? 1 : 0;
+}
+
 void STRING::ToUpper( void )
 {
-	_strupr( string );
+	strupr( string );
 }
 
 void STRING::ToLower( void )
 {
-	_strlwr( string );
+	strlwr( string );
+}
+
+char STRING::Back( void )
+{
+    return string[strlen(string)];
+}
+
+char STRING::Front( void )
+{
+    return string[0];
 }
 
 STRING& STRING::SubString( const size_t position, size_t length )
