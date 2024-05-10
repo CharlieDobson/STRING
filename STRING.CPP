@@ -24,7 +24,7 @@ STRING::STRING( const STRING& String )
     buffer = NULL;
 
     if ( string != NULL ) {
-        strcpy( string, String.GetCharString() );
+        strcpy( string, String.ToCharString() );
     }
 }
 
@@ -37,11 +37,6 @@ STRING::~STRING( void )
     }
 }
 
-char* STRING::GetCharString( void ) const
-{
-	return string;
-}
-
 int STRING::IsEqual( const char* String )
 {
     return strcmp( string, String ) == 0 ? 1 : 0;
@@ -49,7 +44,7 @@ int STRING::IsEqual( const char* String )
 
 int STRING::IsEqual( const STRING& String )
 {
-    return strcmp( string, String.GetCharString() ) == 0 ? 1 : 0;
+    return strcmp( string, String.ToCharString() ) == 0 ? 1 : 0;
 }
 
 unsigned int STRING::Length( void ) const
@@ -82,12 +77,12 @@ void STRING::ToLower( void )
 	strlwr( string );
 }
 
-char STRING::Back( void )
+char& STRING::Back( void ) const
 {
-    return string[strlen(string)];
+    return string[strlen( string ) - 1];
 }
 
-char STRING::Front( void )
+char& STRING::Front( void ) const
 {
     return string[0];
 }
@@ -111,14 +106,14 @@ STRING& STRING::SubString( const size_t position, size_t length )
 	return (STRING&)buffer;
 }
 
+char* STRING::ToCharString( void ) const
+{
+	return string;
+}
+
 STRING& STRING::operator=( const char* String )
 {
-	if ( string == NULL ) {
-		string = (char*)malloc( strlen( String ) + 1 );
-	}
-	else {
-		string = (char*)realloc( string, strlen( String ) + 1 );
-	}
+    string == NULL ? string = (char*)malloc( strlen( String ) + 1 ) : string = (char*)realloc( string, strlen( String ) + 1 );
 	
 	if ( string != NULL ) {
 		strcpy( string, String );
@@ -129,15 +124,10 @@ STRING& STRING::operator=( const char* String )
 
 STRING& STRING::operator=( const STRING& String )
 {
-	if ( string == NULL ) {
-		string = (char*)malloc( String.Length() + 1 );
-	}
-	else {
-		string = (char*)realloc( string, String.Length() + 1 );
-	}
-	
+    string == NULL ? string = (char*)malloc( String.Length() + 1 ) : string = (char*)realloc( string, String.Length() + 1 );
+
 	if ( string != NULL ) {
-		strcpy( string, String.GetCharString() );
+		strcpy( string, String.ToCharString() );
 	}
 	
 	return (STRING&)string;
@@ -159,7 +149,7 @@ STRING& STRING::operator+=( const STRING& String )
 	string = (char*)realloc( string, strlen( string ) + String.Length() + 1 );
 	
 	if ( string != NULL ) {
-		strcat( string, String.GetCharString() );
+		strcat( string, String.ToCharString() );
 	}
 	
 	return (STRING&)string;
@@ -181,7 +171,7 @@ STRING& STRING::operator+( const STRING& String )
 	string = (char*)realloc( string, strlen( string ) + String.Length() + 1 );
 	
 	if ( string != NULL ) {
-		strcat( string, String.GetCharString() );
+		strcat( string, String.ToCharString() );
 	}
 	
 	return (STRING&)string;
@@ -194,7 +184,7 @@ int STRING::operator==( const char* String )
 
 int STRING::operator==( const STRING& String )
 {
-	return strcmp( string, String.GetCharString() ) == 0 ? 1 : 0;
+	return strcmp( string, String.ToCharString() ) == 0 ? 1 : 0;
 }
 
 STRING::operator const char*() const

@@ -22,19 +22,17 @@ class STRING
     STRING( const STRING& String );
     ~STRING( void );
 
-    // accessors and mutators
-    char* GetCharString( void ) const;
-
-    // methods
+    // accessors, mutators and methods
     unsigned int Length( void ) const;
     unsigned int Count( void ) const;
     void Clear( void );
     int Empty( void );
     void ToUpper( void );
     void ToLower( void );
-    char Back( void );
-    char Front( void );
+    char& Back( void ) const;
+    char& Front( void ) const;
     STRING& SubString( const size_t position, size_t length );
+    char* ToCharString( void ) const;
 
     // operator overloads
     STRING& operator=( const char* String );
