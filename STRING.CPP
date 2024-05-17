@@ -5,13 +5,13 @@
 STRING::STRING( void )
 {
     string = NULL;
-    buffer = NULL;
+	temp_buffer = NULL;
 }
 
 STRING::STRING( const char& String )
 {
-    string = (char*)malloc( strlen( &String ) + 1 );
-    buffer = NULL;
+    string = (char*)calloc( 1, strlen( &String ) + 1 );
+	temp_buffer = NULL;
 
     if ( string != NULL ) {
         strcpy( string, &String );
@@ -20,8 +20,8 @@ STRING::STRING( const char& String )
 
 STRING::STRING( const STRING& String )
 {
-    string = (char*)malloc( String.Length() + 1 );
-    buffer = NULL;
+    string = (char*)calloc( 1, String.Length() + 1 );
+	temp_buffer = NULL;
 
     if ( string != NULL ) {
         strcpy( string, String.ToCharString() );
@@ -30,9 +30,10 @@ STRING::STRING( const STRING& String )
 
 STRING::~STRING( void )
 {
-	delete[] buffer;
-	
-    if ( string != NULL ) {
+	if ( temp_buffer != NULL ) {
+		free( temp_buffer );
+	}
+    if ( *string != NULL ) {
         free( string );
     }
 }
@@ -62,7 +63,7 @@ void STRING::Clear( void )
 	memset( string, '\0', sizeof( string ) );
 }
 
-int STRING::Empty( void )
+int STRING::IsEmpty( void )
 {
     return string[0] == NULL ? 1 : 0;
 }
@@ -92,18 +93,112 @@ STRING& STRING::SubString( const size_t position, size_t length )
 	if ( length > strlen( string ) ) {
 		length = strlen( string );
 	}
-	
-	buffer = new char[length + 1];
-	memset( buffer, '\0', sizeof( buffer ) );
-	
+
+	temp_buffer == NULL ? temp_buffer = (char*)calloc( 1, length - position + 1 ) : temp_buffer = (char*)realloc( temp_buffer, length - position + 1 );
+	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+
 	if ( position > strlen( string ) ) {
-		return (STRING&)buffer;
+		return (STRING&)temp_buffer;
 	}
+
+	strncpy( temp_buffer, &string[position], length );
 	
-	memcpy( buffer, &string[position], length );
-	buffer[length] = '\0';
-	
-	return (STRING&)buffer;
+	return (STRING&)temp_buffer;
+}
+
+STRING& STRING::Insert( const size_t position, const char* String )
+{
+    string == NULL ? string = (char*)calloc( 1, strlen( String ) + 1 ) : string = (char*)realloc( string, strlen( string ) + strlen( String ) + 1 );
+	temp_buffer == NULL ? temp_buffer = (char*)calloc( 1, strlen( string ) + strlen( String ) + 1 ) : temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( String ) + 1 );
+	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+
+	if ( string == NULL ) {
+		return (STRING&)string;
+	}
+
+	if ( position == 0 ) {
+		strncpy( temp_buffer, String, strlen( String ) );
+		strncat( temp_buffer, string, strlen( string ) );
+		strncpy( string, temp_buffer, strlen( temp_buffer ) );
+	}
+	else if ( position < strlen( string ) ) {
+		strncpy( temp_buffer, string, position );
+		strncat( temp_buffer, String, strlen( String ) );
+		strncat( temp_buffer, &string[position], strlen( string ) - position );
+		strncpy( string, temp_buffer, strlen( temp_buffer ) );
+	}
+	else if ( position >= strlen( string ) ) {
+		strcat( string, String );
+	}
+
+	return (STRING&)string;
+}
+
+STRING& STRING::Insert( const size_t position, STRING& String )
+{
+    string == NULL ? string = (char*)calloc( 1, String.Length() + 1 ) : string = (char*)realloc( string, strlen( string ) + String.Length() + 1 );
+	temp_buffer == NULL ? temp_buffer = (char*)calloc( 1, strlen( string ) + String.Length() + 1 ) : temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + String.Length() + 1 );
+	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+
+	if ( string == NULL ) {
+		return (STRING&)string;
+	}
+
+	if ( position == 0 ) {
+		strncpy( temp_buffer, String.ToCharString(), String.Length() );
+		strncat( temp_buffer, string, strlen( string ) );
+		strncpy( string, temp_buffer, strlen( temp_buffer ) );
+	}
+	else if ( position < strlen( string ) ) {
+		strncpy( temp_buffer, string, position );
+		strncat( temp_buffer, String.ToCharString(), String.Length() );
+		strncat( temp_buffer, &string[position], strlen( string ) - position );
+		strncpy( string, temp_buffer, strlen( temp_buffer ) );
+	}
+	else if ( position >= strlen( string ) ) {
+		strcat( string, String.ToCharString() );
+	}
+
+	return (STRING&)string;
+}
+
+STRING& STRING::Remove( const size_t position, size_t length )
+{
+	if ( string == NULL ) {
+		return (STRING&)string;
+	}
+
+	if ( position == 0 && length == 0 ) {
+		return (STRING&)string;
+	}
+
+	if ( position >= strlen( string ) ) {
+		return (STRING&)string;
+	}
+
+	if ( length > strlen( string ) ) {
+		length = strlen( string );
+	}
+
+	temp_buffer == NULL ? temp_buffer = (char*)calloc( 1, strlen( string ) + 1 ) : temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + 1 );
+	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	strncpy( temp_buffer, string, strlen( string ) );
+
+	string = (char*)realloc( string, strlen( temp_buffer ) - length - position + 1 );
+	memset( string, '\0', strlen( temp_buffer ) - length - position + 1 );
+
+	if ( position == 0 ) {
+		strncpy( string, &temp_buffer[length], strlen( temp_buffer ) - length );
+	}
+	else {
+		char* buffer = new char[strlen( &temp_buffer[length] ) - length + 1];
+		strncpy( string, temp_buffer, position );
+		strncpy( buffer, &temp_buffer[length + 1], strlen( temp_buffer ) - length );
+		strcat( string, buffer );
+		delete[] buffer;
+	}
+
+	return (STRING&)string;
 }
 
 char* STRING::ToCharString( void ) const
@@ -113,7 +208,7 @@ char* STRING::ToCharString( void ) const
 
 STRING& STRING::operator=( const char* String )
 {
-    string == NULL ? string = (char*)malloc( strlen( String ) + 1 ) : string = (char*)realloc( string, strlen( String ) + 1 );
+    string == NULL ? string = (char*)calloc( 1, strlen( String ) + 1 ) : string = (char*)realloc( string, strlen( String ) + 1 );
 	
 	if ( string != NULL ) {
 		strcpy( string, String );
@@ -124,7 +219,7 @@ STRING& STRING::operator=( const char* String )
 
 STRING& STRING::operator=( const STRING& String )
 {
-    string == NULL ? string = (char*)malloc( String.Length() + 1 ) : string = (char*)realloc( string, String.Length() + 1 );
+    string == NULL ? string = (char*)calloc( 1, String.Length() + 1 ) : string = (char*)realloc( string, String.Length() + 1 );
 
 	if ( string != NULL ) {
 		strcpy( string, String.ToCharString() );
@@ -155,6 +250,7 @@ STRING& STRING::operator+=( const STRING& String )
 	return (STRING&)string;
 }
 
+
 STRING& STRING::operator+( const char* String )
 {
 	string = (char*)realloc( string, strlen( string ) + strlen( String ) + 1 );
@@ -172,6 +268,18 @@ STRING& STRING::operator+( const STRING& String )
 	
 	if ( string != NULL ) {
 		strcat( string, String.ToCharString() );
+	}
+	
+	return (STRING&)string;
+}
+
+STRING& STRING::operator+( const char& Char )
+{
+	string = (char*)realloc( string, strlen( string ) + 2 );
+	
+	if ( string != NULL ) {
+		string[strlen( string ) + 1] = Char;
+		string[strlen( string ) + 2] = '\0';
 	}
 	
 	return (STRING&)string;

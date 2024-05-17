@@ -1,20 +1,20 @@
 // STRING.HPP class definition file
 
-#pragma warning( disable : 4091 )
-
 #ifndef STRING_HPP
 #define STRING_HPP
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <malloc.h>
 #include <string.h>
 #include <memory.h>
+#include <iostream.h>
 
 
 class STRING
 {
     char* string;
-    char* buffer;
+    char* temp_buffer;
 
   public:
     STRING( void );
@@ -26,12 +26,15 @@ class STRING
     unsigned int Length( void ) const;
     unsigned int Count( void ) const;
     void Clear( void );
-    int Empty( void );
+    int IsEmpty( void );
     void ToUpper( void );
     void ToLower( void );
     char& Back( void ) const;
     char& Front( void ) const;
     STRING& SubString( const size_t position, size_t length );
+    STRING& Insert( const size_t position, const char* String );
+    STRING& Insert( const size_t position, STRING& String );
+    STRING& Remove( const size_t position, size_t length );
     char* ToCharString( void ) const;
 
     // operator overloads
@@ -41,6 +44,7 @@ class STRING
     STRING& operator+=( const STRING& String );
     STRING& operator+( const char* String );
     STRING& operator+( const STRING& String );
+    STRING& operator+( const char& Char );
     int operator==( const char* String );
     int operator==( const STRING& String );
     operator const char*() const;
@@ -49,7 +53,5 @@ class STRING
     int IsEqual( const char* String );
     int IsEqual( const STRING& String );
 };
-
-#pragma warning( default : 4091 )
 
 #endif // end STRING_HPP
