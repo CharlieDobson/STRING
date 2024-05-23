@@ -23,7 +23,7 @@ STRING::STRING( const STRING& String )
     string = (char*)calloc( 1, String.Length() + 1 );
 	temp_buffer = NULL;
 
-    if ( string != NULL ) {
+    if ( *string != NULL ) {
         strcpy( string, String.ToCharString() );
     }
 }
@@ -33,7 +33,7 @@ STRING::~STRING( void )
 	if ( temp_buffer != NULL ) {
 		free( temp_buffer );
 	}
-    if ( *string != NULL ) {
+    if ( string != NULL ) {
         free( string );
     }
 }
@@ -65,7 +65,7 @@ void STRING::Clear( void )
 
 int STRING::IsEmpty( void )
 {
-    return string[0] == NULL ? 1 : 0;
+    return string == NULL ? 1 : 0;
 }
 
 void STRING::ToUpper( void )
@@ -295,7 +295,7 @@ int STRING::operator==( const STRING& String )
 	return strcmp( string, String.ToCharString() ) == 0 ? 1 : 0;
 }
 
-STRING::operator const char*() const
+STRING::operator char*() const
 {
 	return string;
 }

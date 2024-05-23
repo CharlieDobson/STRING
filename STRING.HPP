@@ -47,7 +47,7 @@ class STRING
     STRING& operator+( const char& Char );
     int operator==( const char* String );
     int operator==( const STRING& String );
-    operator const char*() const;
+    operator char*() const;
     
   protected:
     int IsEqual( const char* String );
