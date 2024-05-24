@@ -35,6 +35,11 @@ int main( int argc, char** argv )
     printf( "%c\n", name2.Front() );
     printf( "%i\n", name2.Length() );
 
+    name2.Insert( 0, "Mrs. " );
+    puts( name2 );
+
+    name2.Remove( 1, 1 );
+    puts( name2 );
     
     return 0;
 }

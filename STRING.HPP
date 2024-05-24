@@ -42,6 +42,7 @@ class STRING
     STRING& operator=( const STRING& String );
     STRING& operator+=( const char* String );
     STRING& operator+=( const STRING& String );
+    STRING& operator+=( const char& Char );
     STRING& operator+( const char* String );
     STRING& operator+( const STRING& String );
     STRING& operator+( const char& Char );
