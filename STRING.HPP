@@ -18,7 +18,7 @@ class STRING
 
   public:
     STRING( void );
-    STRING( const char& String );
+    STRING( const char* String );
     STRING( const STRING& String );
     ~STRING( void );
 

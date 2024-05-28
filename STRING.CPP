@@ -8,7 +8,7 @@ STRING::STRING( void )
 	temp_buffer = NULL;
 }
 
-STRING::STRING( const char& String )
+STRING::STRING( const char* String )
 {
     string = (char*)calloc( 1, strlen( &String ) + 1 );
 	temp_buffer = NULL;
@@ -95,7 +95,7 @@ STRING& STRING::SubString( const size_t position, size_t length )
 	}
 
 	temp_buffer = (char*)realloc( temp_buffer, length - position + 1 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', length - position + 1 );
 
 	if ( position > strlen( string ) ) {
 		return (STRING&)temp_buffer;
@@ -110,7 +110,7 @@ STRING& STRING::Insert( const size_t position, const char* String )
 {
     string = (char*)realloc( string, strlen( string ) + strlen( String ) + 1 );
 	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( String ) + 1 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', strlen( string ) + strlen( String ) + 1 );
 
 	if ( string == NULL ) {
 		return (STRING&)string;
@@ -138,7 +138,7 @@ STRING& STRING::Insert( const size_t position, STRING& String )
 {
     string = (char*)realloc( string, strlen( string ) + String.Length() + 1 );
 	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + String.Length() + 1 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', strlen( string ) + String.Length() + 1 );
 
 	if ( string == NULL ) {
 		return (STRING&)string;
@@ -181,7 +181,7 @@ STRING& STRING::Remove( const size_t position, size_t length )
 	}
 
 	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + 1 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', strlen( string ) + 1 );
 	strncpy( temp_buffer, string, strlen( string ) );
 
 	string = (char*)realloc( string, strlen( temp_buffer ) - length - position + 1 );
@@ -265,7 +265,7 @@ STRING& STRING::operator+=( const char& Char )
 STRING& STRING::operator+( const char* String )
 {
 	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( String ) + 1 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', strlen( string ) + strlen( String ) + 1 );
 
 	if ( temp_buffer != NULL ) {
 		strcpy( temp_buffer, string );
@@ -278,7 +278,7 @@ STRING& STRING::operator+( const char* String )
 STRING& STRING::operator+( const STRING& String )
 {
 	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + String.Length() + 1 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', strlen( string ) + String.Length() + 1 );
 
 	if ( temp_buffer != NULL ) {
 		strcpy( temp_buffer, string );
@@ -291,7 +291,7 @@ STRING& STRING::operator+( const STRING& String )
 STRING& STRING::operator+( const char& Char )
 {
 	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + 2 );
-	memset( temp_buffer, '\0', sizeof( temp_buffer ) );
+	memset( temp_buffer, '\0', strlen( string ) + 2 );
 
 	if ( temp_buffer != NULL ) {
 		strcpy( temp_buffer, string );
