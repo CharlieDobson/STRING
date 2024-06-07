@@ -10,11 +10,11 @@ STRING::STRING( void )
 
 STRING::STRING( const char* String )
 {
-    string = (char*)calloc( 1, strlen( &String ) + 1 );
+    string = (char*)calloc( 1, strlen( String ) + 1 );
 	temp_buffer = NULL;
 
     if ( string != NULL ) {
-        strcpy( string, &String );
+        strcpy( string, String );
     }
 }
 
