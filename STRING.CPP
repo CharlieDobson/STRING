@@ -8,13 +8,13 @@ STRING::STRING( void )
 	temp_buffer = NULL;
 }
 
-STRING::STRING( const char* String )
+STRING::STRING( const char& String )
 {
-    string = (char*)calloc( 1, strlen( String ) + 1 );
+    string = (char*)calloc( 1, strlen( &String ) + 1 );
 	temp_buffer = NULL;
 
     if ( string != NULL ) {
-        strcpy( string, String );
+        strcpy( string, &String );
     }
 }
 
@@ -38,9 +38,9 @@ STRING::~STRING( void )
     }
 }
 
-int STRING::IsEqual( const char* String )
+int STRING::IsEqual( const char& String )
 {
-    return strcmp( string, String ) == 0 ? 1 : 0;
+    return strcmp( string, &String ) == 0 ? 1 : 0;
 }
 
 int STRING::IsEqual( const STRING& String )
@@ -106,29 +106,29 @@ STRING& STRING::SubString( const size_t position, size_t length )
 	return (STRING&)temp_buffer;
 }
 
-STRING& STRING::Insert( const size_t position, const char* String )
+STRING& STRING::Insert( const size_t position, const char& String )
 {
-    string = (char*)realloc( string, strlen( string ) + strlen( String ) + 1 );
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( String ) + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + strlen( String ) + 1 );
+    string = (char*)realloc( string, strlen( string ) + strlen( &String ) + 1 );
+	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( &String ) + 1 );
+	memset( temp_buffer, '\0', strlen( string ) + strlen( &String ) + 1 );
 
 	if ( string == NULL ) {
 		return (STRING&)string;
 	}
 
 	if ( position == 0 ) {
-		strncpy( temp_buffer, String, strlen( String ) );
+		strncpy( temp_buffer, &String, strlen( &String ) );
 		strncat( temp_buffer, string, strlen( string ) );
 		strncpy( string, temp_buffer, strlen( temp_buffer ) );
 	}
 	else if ( position < strlen( string ) ) {
 		strncpy( temp_buffer, string, position );
-		strncat( temp_buffer, String, strlen( String ) );
+		strncat( temp_buffer, &String, strlen( &String ) );
 		strncat( temp_buffer, &string[position], strlen( string ) - position );
 		strncpy( string, temp_buffer, strlen( temp_buffer ) );
 	}
 	else if ( position >= strlen( string ) ) {
-		strcat( string, String );
+		strcat( string, &String );
 	}
 
 	return (STRING&)string;
@@ -206,12 +206,12 @@ char* STRING::ToCharString( void ) const
 	return string;
 }
 
-STRING& STRING::operator=( const char* String )
+STRING& STRING::operator=( const char& String )
 {
-    string = (char*)realloc( string, strlen( String ) + 1 );
+    string = (char*)realloc( string, strlen( &String ) + 1 );
 
 	if ( string != NULL ) {
-		strcpy( string, String );
+		strcpy( string, &String );
 	}
 
     return (STRING&)string;
@@ -228,12 +228,12 @@ STRING& STRING::operator=( const STRING& String )
 	return (STRING&)string;
 }
 
-STRING& STRING::operator+=( const char* String )
+STRING& STRING::operator+=( const char& String )
 {
-	string = (char*)realloc( string, strlen( string ) + strlen( String ) + 1 );
+	string = (char*)realloc( string, strlen( string ) + strlen( &String ) + 1 );
 
 	if ( string != NULL ) {
-		strcat( string, String );
+		strcat( string, &String );
 	}
 
 	return (STRING&)string;
@@ -250,26 +250,14 @@ STRING& STRING::operator+=( const STRING& String )
 	return (STRING&)string;
 }
 
-STRING& STRING::operator+=( const char& Char )
+STRING& STRING::operator+( const char& String )
 {
-	string = (char*)realloc( string, strlen( string ) + 2 );
-
-	if ( string != NULL ) {
-		string[strlen( string ) + 1] = Char;
-		string[strlen( string ) + 2] = '\0';
-	}
-
-	return (STRING&)string;
-}
-
-STRING& STRING::operator+( const char* String )
-{
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( String ) + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + strlen( String ) + 1 );
+	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( &String ) + 1 );
+	memset( temp_buffer, '\0', strlen( string ) + strlen( &String ) + 1 );
 
 	if ( temp_buffer != NULL ) {
 		strcpy( temp_buffer, string );
-		strcat( temp_buffer, String );
+		strcat( temp_buffer, &String );
 	}
 
 	return (STRING&)temp_buffer;
@@ -288,23 +276,9 @@ STRING& STRING::operator+( const STRING& String )
 	return (STRING&)temp_buffer;
 }
 
-STRING& STRING::operator+( const char& Char )
+int STRING::operator==( const char& String )
 {
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + 2 );
-	memset( temp_buffer, '\0', strlen( string ) + 2 );
-
-	if ( temp_buffer != NULL ) {
-		strcpy( temp_buffer, string );
-		temp_buffer[strlen( temp_buffer ) + 1] = Char;
-		temp_buffer[strlen( temp_buffer ) + 2] = '\0';
-	}
-
-	return (STRING&)temp_buffer;
-}
-
-int STRING::operator==( const char* String )
-{
-	return strcmp( string, String ) == 0 ? 1 : 0;
+	return strcmp( string, &String ) == 0 ? 1 : 0;
 }
 
 int STRING::operator==( const STRING& String )

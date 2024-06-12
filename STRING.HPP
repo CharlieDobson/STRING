@@ -18,7 +18,7 @@ class STRING
 
   public:
     STRING( void );
-    STRING( const char* String );
+    STRING( const char& String );
     STRING( const STRING& String );
     ~STRING( void );
 
@@ -32,26 +32,24 @@ class STRING
     char& Back( void ) const;
     char& Front( void ) const;
     STRING& SubString( const size_t position, size_t length );
-    STRING& Insert( const size_t position, const char* String );
+    STRING& Insert( const size_t position, const char& String );
     STRING& Insert( const size_t position, STRING& String );
     STRING& Remove( const size_t position, size_t length );
     char* ToCharString( void ) const;
 
     // operator overloads
-    STRING& operator=( const char* String );
+    STRING& operator=( const char& String );
     STRING& operator=( const STRING& String );
-    STRING& operator+=( const char* String );
+    STRING& operator+=( const char& String );
     STRING& operator+=( const STRING& String );
-    STRING& operator+=( const char& Char );
-    STRING& operator+( const char* String );
+    STRING& operator+( const char& String );
     STRING& operator+( const STRING& String );
-    STRING& operator+( const char& Char );
-    int operator==( const char* String );
+    int operator==( const char& String );
     int operator==( const STRING& String );
     operator char*() const;
 
   protected:
-    int IsEqual( const char* String );
+    int IsEqual( const char& String );
     int IsEqual( const STRING& String );
 };
 
