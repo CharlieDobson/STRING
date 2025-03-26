@@ -1,292 +1,603 @@
-// STRING.CPP class implementation file
+// implementation file for custom string class
 
 #include "string.hpp"
 
-STRING::STRING( void )
+String::String( void )
 {
-    string = NULL;
-	temp_buffer = NULL;
+    m_string = NULL;
 }
 
-STRING::STRING( const char& String )
+String::String( const char* string )
 {
-    string = (char*)calloc( 1, strlen( &String ) + 1 );
-	temp_buffer = NULL;
-
     if ( string != NULL ) {
-        strcpy( string, &String );
+        m_string = new char[strlen( string ) + 1];
+        strcpy( m_string, string );
     }
 }
 
-STRING::STRING( const STRING& String )
+String::String( const String& string )
 {
-    string = (char*)calloc( 1, String.Length() + 1 );
-	temp_buffer = NULL;
+    m_string = new char[string.Length() + 1];
+    strcpy( m_string, string.ToCharString() );
+}
 
-    if ( *string != NULL ) {
-        strcpy( string, String.ToCharString() );
+String::~String( void )
+{
+    delete[] m_string;
+}
+
+void String::swap_pointers( char** first, char** second )
+{
+    char* temp = *first;
+    *first = *second;
+    *second = temp;
+}
+
+String& String::operator=( const char* string )
+{
+    if ( strcmp( m_string, string ) == 0 ) {
+        return *this;
     }
+    
+    String temp( string );
+
+    swap_pointers( &temp.m_string, &m_string );
+
+    return *this;
 }
 
-STRING::~STRING( void )
+String& String::operator=( const String& string )
 {
-	if ( temp_buffer != NULL ) {
-		free( temp_buffer );
-	}
-    if ( string != NULL ) {
-        free( string );
+    if ( *this == string ) {
+        return *this;
     }
+
+    String temp( string );
+
+    swap_pointers( &temp.m_string, &m_string );
+
+    return *this;
 }
 
-int STRING::IsEqual( const char& String )
+String& String::operator+=( const char* string )
 {
-    return strcmp( string, &String ) == 0 ? 1 : 0;
+    if ( NULL == string || string[0] == '\0' ) {
+        // If the input string is null, do nothing
+        return *this;
+    }
+
+    if ( NULL == m_string ) {
+        // If m_string is null, simply initialize it with the input string
+        m_string = new char[strlen(string) + 1];
+        strcpy( m_string, string );
+        return *this;
+    }
+
+    // Calculate the new length required
+    size_t new_length = strlen( m_string ) + strlen( string );
+
+    // Allocate new memory for the concatenated string
+    char* new_string = new char[new_length + 1];
+
+    // Copy the existing string
+    strcpy( new_string, m_string );
+    strcat( new_string, string );
+
+    // Free old memory
+    delete[] m_string;
+
+    // Update m_string to point to the new concatenated string
+    m_string = new_string;
+
+    return *this;
 }
 
-int STRING::IsEqual( const STRING& String )
+String& String::operator+=( const String& string )
 {
-    return strcmp( string, String.ToCharString() ) == 0 ? 1 : 0;
+    if ( NULL == string.ToCharString() ) {
+        // If the input string is null, do nothing
+        return *this;
+    }
+
+    if ( NULL == m_string ) {
+        // If m_string is null, simply initialize it with the input string
+        m_string = new char[string.Length() + 1];
+        strcpy( m_string, string.ToCharString() );
+        return *this;
+    }
+
+    // Calculate the new size required
+    size_t new_length = strlen( m_string ) + strlen( string.m_string );
+
+    // Allocate new memory for the concatenated string
+    char* new_string = new char[new_length + 1];
+    strcpy( new_string, m_string );
+    strcat( new_string, string.m_string );
+
+    // Free old memory
+    delete[] m_string;
+
+    // Update m_string to point to the new concatenated string
+    m_string = new_string;
+
+    return *this;
 }
 
-unsigned int STRING::Length( void ) const
+int operator==( const char* lhs, const String& rhs )
 {
-	return (unsigned int)strlen( string );
+    return strcmp( lhs, rhs.m_string ) == 0 ? 1 : 0;
 }
 
-unsigned int STRING::Count( void ) const
+int operator==( const String& lhs, const char* rhs )
 {
-	return (unsigned int)strlen( string );
+    return strcmp( lhs.m_string, rhs ) == 0 ? 1 : 0;
 }
 
-void STRING::Clear( void )
+int operator==( const String& lhs, const String& rhs )
 {
-	memset( string, '\0', sizeof( string ) );
+    return strcmp( lhs.m_string, rhs.m_string ) == 0 ? 1 : 0;
 }
 
-int STRING::IsEmpty( void )
+int operator!=( const char* lhs, const String& rhs )
 {
-    return string == NULL ? 1 : 0;
+    return strcmp( lhs, rhs.m_string ) == 0 ? 0 : 1;
 }
 
-void STRING::ToUpper( void )
+int operator!=( const String& lhs, const char* rhs )
 {
-	strupr( string );
+    return strcmp( lhs.m_string, rhs ) == 0 ? 0 : 1;
 }
 
-void STRING::ToLower( void )
+int operator!=( const String& lhs, const String& rhs )
 {
-	strlwr( string );
+    return strcmp( lhs.m_string, rhs.m_string ) == 0 ? 0 : 1;
 }
 
-char& STRING::Back( void ) const
+String operator+( const char* lhs, const String& rhs )
 {
-    return string[strlen( string ) - 1];
+    size_t new_length = strlen( lhs ) + strlen( rhs.m_string );
+
+    char* new_string = new char[new_length + 1];
+    strcpy( new_string, lhs );
+    strcat( new_string, rhs.m_string );
+
+    String result( new_string );
+    delete[] new_string;
+
+    return result;
 }
 
-char& STRING::Front( void ) const
+String operator+( const String& lhs, const char* rhs )
 {
-    return string[0];
+    size_t new_length = strlen( lhs.m_string ) + strlen( rhs );
+
+    char* new_string = new char[new_length + 1];
+    strcpy( new_string, lhs.m_string );
+    strcat( new_string, rhs );
+
+    String result( new_string );
+    delete[] new_string;
+
+    return result;
 }
 
-STRING& STRING::SubString( const size_t position, size_t length )
+String operator+( const String& lhs, const String& rhs )
 {
-	if ( length > strlen( string ) ) {
-		length = strlen( string );
-	}
+    size_t new_length = strlen( lhs.m_string ) + strlen( rhs.m_string );
 
-	temp_buffer = (char*)realloc( temp_buffer, length - position + 1 );
-	memset( temp_buffer, '\0', length - position + 1 );
+    char* new_string = new char[new_length + 1];
+    strcpy( new_string, lhs.m_string );
+    strcat( new_string, rhs.m_string );
 
-	if ( position > strlen( string ) ) {
-		return (STRING&)temp_buffer;
-	}
+    String result( new_string );
+    delete[] new_string;
 
-	strncpy( temp_buffer, &string[position], length );
-
-	return (STRING&)temp_buffer;
+    return result;
 }
 
-STRING& STRING::Insert( const size_t position, const char& String )
+ostream& operator<<( ostream& output, const String& string )
 {
-    string = (char*)realloc( string, strlen( string ) + strlen( &String ) + 1 );
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( &String ) + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + strlen( &String ) + 1 );
+    if ( NULL != string.ToCharString() ) {
+        output << string.ToCharString();
+    }
 
-	if ( string == NULL ) {
-		return (STRING&)string;
-	}
-
-	if ( position == 0 ) {
-		strncpy( temp_buffer, &String, strlen( &String ) );
-		strncat( temp_buffer, string, strlen( string ) );
-		strncpy( string, temp_buffer, strlen( temp_buffer ) );
-	}
-	else if ( position < strlen( string ) ) {
-		strncpy( temp_buffer, string, position );
-		strncat( temp_buffer, &String, strlen( &String ) );
-		strncat( temp_buffer, &string[position], strlen( string ) - position );
-		strncpy( string, temp_buffer, strlen( temp_buffer ) );
-	}
-	else if ( position >= strlen( string ) ) {
-		strcat( string, &String );
-	}
-
-	return (STRING&)string;
+    return output;
 }
 
-STRING& STRING::Insert( const size_t position, STRING& String )
+istream& operator>>( istream& input, String& string )
 {
-    string = (char*)realloc( string, strlen( string ) + String.Length() + 1 );
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + String.Length() + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + String.Length() + 1 );
+    if ( NULL != string.m_string ) {
+        delete[] string.m_string;
+    }
 
-	if ( string == NULL ) {
-		return (STRING&)string;
-	}
+    String temp;
+    input >> temp;
 
-	if ( position == 0 ) {
-		strncpy( temp_buffer, String.ToCharString(), String.Length() );
-		strncat( temp_buffer, string, strlen( string ) );
-		strncpy( string, temp_buffer, strlen( temp_buffer ) );
-	}
-	else if ( position < strlen( string ) ) {
-		strncpy( temp_buffer, string, position );
-		strncat( temp_buffer, String.ToCharString(), String.Length() );
-		strncat( temp_buffer, &string[position], strlen( string ) - position );
-		strncpy( string, temp_buffer, strlen( temp_buffer ) );
-	}
-	else if ( position >= strlen( string ) ) {
-		strcat( string, String.ToCharString() );
-	}
+    string.m_string = new char[temp.Length() + 1];
+    strcpy( string.m_string, temp.ToCharString() );
 
-	return (STRING&)string;
+    return input;
 }
 
-STRING& STRING::Remove( const size_t position, size_t length )
+String::operator char*() const
 {
-	if ( string == NULL ) {
-		return (STRING&)string;
-	}
-
-	if ( position == 0 && length == 0 ) {
-		return (STRING&)string;
-	}
-
-	if ( position >= strlen( string ) ) {
-		return (STRING&)string;
-	}
-
-	if ( length > strlen( string ) ) {
-		length = strlen( string );
-	}
-
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + 1 );
-	strncpy( temp_buffer, string, strlen( string ) );
-
-	string = (char*)realloc( string, strlen( temp_buffer ) - length - position + 1 );
-	memset( string, '\0', strlen( temp_buffer ) - length - position + 1 );
-
-	if ( position == 0 ) {
-		strncpy( string, &temp_buffer[length], strlen( temp_buffer ) - length );
-	}
-	else {
-		char* buffer = new char[strlen( &temp_buffer[length] ) - length + 1];
-		strncpy( string, temp_buffer, position );
-		strncpy( buffer, &temp_buffer[length + 1], strlen( temp_buffer ) - length );
-		strcat( string, buffer );
-		delete[] buffer;
-	}
-
-	return (STRING&)string;
+    return m_string;
 }
 
-char* STRING::ToCharString( void ) const
+int String::operator!() const
 {
-	return string;
+    return ( NULL == m_string || m_string[0] == '\0' ) ? 1 : 0;
 }
 
-STRING& STRING::operator=( const char& String )
+const char& String::operator[]( size_t index ) const
 {
-    string = (char*)realloc( string, strlen( &String ) + 1 );
+    if ( NULL == m_string || index >= strlen( m_string ) ) {
+        return '\0';
+    }
 
-	if ( string != NULL ) {
-		strcpy( string, &String );
-	}
-
-    return (STRING&)string;
+    return m_string[index];
 }
 
-STRING& STRING::operator=( const STRING& String )
+int String::empty( void ) const
 {
-    string = (char*)realloc( string, String.Length() + 1 );
-
-	if ( string != NULL ) {
-		strcpy( string, String.ToCharString() );
-	}
-
-	return (STRING&)string;
+    return ( NULL == m_string || m_string[0] == '\0' ) ? 1 : 0;
 }
 
-STRING& STRING::operator+=( const char& String )
+size_t String::Length( void ) const
 {
-	string = (char*)realloc( string, strlen( string ) + strlen( &String ) + 1 );
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
 
-	if ( string != NULL ) {
-		strcat( string, &String );
-	}
-
-	return (STRING&)string;
+    return strlen( m_string );
 }
 
-STRING& STRING::operator+=( const STRING& String )
+size_t String::count( void ) const
 {
-	string = (char*)realloc( string, strlen( string ) + String.Length() + 1 );
-
-	if ( string != NULL ) {
-		strcat( string, String.ToCharString() );
-	}
-
-	return (STRING&)string;
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+    
+    return strlen( m_string );
 }
 
-STRING& STRING::operator+( const char& String )
+char* String::ToCharString( void ) const
 {
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + strlen( &String ) + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + strlen( &String ) + 1 );
-
-	if ( temp_buffer != NULL ) {
-		strcpy( temp_buffer, string );
-		strcat( temp_buffer, &String );
-	}
-
-	return (STRING&)temp_buffer;
+    return m_string;
 }
 
-STRING& STRING::operator+( const STRING& String )
+char* String::c_str( void ) const
 {
-	temp_buffer = (char*)realloc( temp_buffer, strlen( string ) + String.Length() + 1 );
-	memset( temp_buffer, '\0', strlen( string ) + String.Length() + 1 );
-
-	if ( temp_buffer != NULL ) {
-		strcpy( temp_buffer, string );
-		strcat( temp_buffer, String.ToCharString() );
-	}
-
-	return (STRING&)temp_buffer;
+    return m_string;
 }
 
-int STRING::operator==( const char& String )
+char String::front( void ) const
 {
-	return strcmp( string, &String ) == 0 ? 1 : 0;
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return '\0';
+    }
+
+    return m_string[0];
 }
 
-int STRING::operator==( const STRING& String )
+char String::back( void ) const
 {
-	return strcmp( string, String.ToCharString() ) == 0 ? 1 : 0;
+    size_t length = strlen( m_string );
+    if ( NULL == m_string || length == 0 ) {
+        return '\0';
+    }
+
+    return m_string[length - 1];
 }
 
-STRING::operator char*() const
+void String::push_back( const char ch )
 {
-	return string;
+    if ( NULL == m_string ) {
+        m_string = new char[2];
+        m_string[0] = ch;
+        m_string[1] = '\0';
+        return;
+    }
+
+    size_t current_length = strlen( m_string );
+
+    char* new_string = new char[current_length + 2];
+    strcpy( new_string, m_string );
+    new_string[current_length] = ch;
+    new_string[current_length + 1] = '\0';
+    delete[] m_string;
+    m_string = new_string;
+}
+
+void String::pop_back( void )
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return;
+    }
+
+    m_string[strlen( m_string ) - 1] = '\0';
+}
+
+int String::starts_with( const char* string )
+{
+    if ( NULL == m_string || NULL == string ) {
+        return 0;
+    }
+
+    for ( int i = 0; string[i] != '\0'; ++i ) {
+        if ( m_string[i] == '\0' || string[i] != m_string[i] ) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int String::ends_with( const char* string )
+{
+    if ( NULL == m_string || NULL == string ) {
+        return 0;
+    }
+
+    size_t size1 = strlen( m_string );
+    size_t size2 = strlen( string );
+
+    if ( size2 > size1 ) {
+        return 0;
+    }
+
+    for ( int i = 0; i < size2; ++i ) {
+        if ( m_string[size1 - size2 + i] != string[i] ) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int String::find( const char* string )
+{
+    if ( NULL == m_string || NULL == string ) {
+        return -1;
+    }
+
+    const char* position = strstr( m_string, string );
+
+    if ( NULL == position ) {
+        return -1;
+    }
+
+    return position - m_string;
+}
+
+String String::substr( const size_t position, size_t length ) const
+{
+    if ( position >= strlen( m_string ) ) {
+        return String( "" );
+    }
+
+    if ( position + length > strlen( m_string ) ) {
+        length = strlen( m_string ) - position; // Adjust length to fit within bounds
+    }
+
+    // Allocate memory for the substring
+    char* substring = new char[length + 1];
+    strncpy( substring, &m_string[position], length );
+    substring[length] = '\0'; // Null-terminate the substring
+
+    // Create a new String object and return it by value
+    String result( substring );
+
+    // Clean up the temporary buffer
+    delete[] substring;
+
+    return result;
+}
+
+String String::to_string( const short value ) const
+{
+    char temp[32];
+    _snprintf( temp, sizeof( temp ), "%d", value );
+
+    return String( temp );
+}
+
+String String::to_string( const unsigned short value ) const
+{
+    char temp[32];
+    _snprintf( temp, sizeof( temp ), "%d", value );
+
+    return String( temp );
+}
+
+String String::to_string( const int value ) const
+{
+    char temp[32];
+    _snprintf( temp, sizeof( temp ), "%d", value );
+
+    return String( temp );
+}
+
+String String::to_string( const unsigned int value ) const
+{
+    char temp[32];
+    _snprintf( temp, sizeof( temp ), "%d", value );
+
+    return String( temp );
+}
+
+String String::to_string( const long value ) const
+{
+    char temp[32];
+    _snprintf( temp, sizeof( temp ), "%ld", value );
+
+    return String( temp );
+}
+
+String String::to_string( const unsigned long value ) const
+{
+    char temp[32];
+    _snprintf( temp, sizeof( temp ), "%lu", value );
+
+    return String( temp );
+}
+
+String String::to_string( const float value ) const
+{
+    char temp[64];
+    _snprintf( temp, sizeof( temp ), "%f", value );
+
+    return String( temp );
+}
+
+String String::to_string( const double value ) const
+{
+    char temp[128];
+    _snprintf( temp, sizeof( temp ), "%lu", value );
+
+    return String( temp );
+}
+
+short String::to_short( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    long result = strtol( m_string, &end_pointer, 10 );
+
+    if ( result < SHRT_MAX || result > SHRT_MAX ) {
+        return 0;
+    }
+
+    if ( *end_pointer == '\0' ) {
+        return (short)result;
+    }
+
+    return 0;
+}
+
+unsigned short String::to_ushort( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    long result = strtol( m_string, &end_pointer, 10 );
+
+    if ( result < USHRT_MAX || result > USHRT_MAX ) {
+        return 0;
+    }
+
+    if ( *end_pointer == '\0' ) {
+        return (unsigned short)result;
+    }
+
+    return 0;
+}
+
+int String::to_int( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    long result = strtol( m_string, &end_pointer, 10 );
+
+    if ( result < INT_MAX || result > INT_MAX ) {
+        return 0;
+    }
+
+    if ( *end_pointer == '\0' ) {
+        return (int)result;
+    }
+
+    return 0;
+}
+
+unsigned int String::to_uint( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    long result = strtol( m_string, &end_pointer, 10 );
+
+    if ( result < UINT_MAX || result > UINT_MAX ) {
+        return 0;
+    }
+
+    if ( *end_pointer == '\0' ) {
+        return (unsigned int)result;
+    }
+
+    return 0;
+}
+
+long String::to_long( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    long result = strtol( m_string, &end_pointer, 10 );
+
+    if ( *end_pointer == '\0' ) {
+        return result;
+    }
+
+    return 0;
+}
+
+unsigned long String::to_ulong( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    unsigned long result = strtoul( m_string, &end_pointer, 10 );
+
+    if ( *end_pointer == '\0' ) {
+        return result;
+    }
+
+    return 0;
+}
+
+float String::to_float( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    float result = strtof( m_string, &end_pointer );
+
+    if ( *end_pointer == '\0' ) {
+        return result;
+    }
+
+    return 0;
+}
+
+double String::to_double( void ) const
+{
+    if ( NULL == m_string || m_string[0] == '\0' ) {
+        return 0;
+    }
+
+    char* end_pointer;
+    double result = strtod( m_string, &end_pointer );
+
+    if ( *end_pointer == '\0' ) {
+        return result;
+    }
+
+    return 0;
 }
